@@ -8,7 +8,7 @@ const fs = require('fs');
 // type of neural network to train
 const NETWORK_TYPE = 'CNN';
 // number of games to play
-const LEARN_TIMES = 2;
+const LEARN_TIMES = 1000;
 // learningRate is progressively decreased with the number of games until
 // the final value LR_INIT/LR_FINAL_FRACTION
 const LR_INIT = 0.0001;
@@ -46,7 +46,7 @@ const myTrainer = NeuralNetwork.getTrainer(NETWORK_TYPE, myNetwork);
 for (let i = 0; i < LEARN_TIMES; i++) {
   // display info once every 1/100
   if (i % (LEARN_TIMES / 100) === 0) console.log(i);
-  const display = (i % (LEARN_TIMES / 100) === 0) ? true : false;
+  const display = true
 
   // change ratio between exploration and exploitation
   const epsilon = EPSILON_INIT + (EPSILON_FINAL - EPSILON_INIT) * i / LEARN_TIMES;

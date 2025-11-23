@@ -1,14 +1,14 @@
 // @flow
-const connect4 = require('./Game');
+const noughtsAndCrosses = require('./Game');
 const Helper = require('./Helper');
 const NeuralNetwork = require('./NeuralNetwork');
 
-exports.playGame = (networkType: string, epsilon: number, myNetwork: any, display: boolean) => {
+exports.playGame = (networkType, epsilon, myNetwork, display) => {
   let winnerBoardStates = [];
   let winnerPlays = [];
   let loserBoardStates = [];
   let loserPlays = [];
-  const game = new connect4.Game();
+  const game = new noughtsAndCrosses.Game();
   const boardStatesAsPlayer1 = [];
   const boardStatesAsPlayer2 = [];
   const playsAsPlayer1 = [];
@@ -20,29 +20,39 @@ exports.playGame = (networkType: string, epsilon: number, myNetwork: any, displa
   while (!pat && !winner) {
     // Play
     const explore = !(Math.random() < epsilon);
-    let columnIndex;
+    let spaceId;
     let output = [];
     let formattedBoard = NeuralNetwork.formatInput(networkType, game.board, playerIdToPlay);
     if (!explore) {
+      
       output = NeuralNetwork.predict(networkType, myNetwork, formattedBoard);
-      columnIndex = output.indexOf(Math.max(...output));
+      spaceId = output.indexOf(Math.max(...output));
     } else {
-      columnIndex = Helper.randomChoice([0, 1, 2, 3, 4, 5, 6]);
+      
+      spaceId = Helper.randomChoice(game.getAvailableIds());
     }
-    const playAgain = game.playChip(playerIdToPlay, columnIndex);
+
+    let playAgain = game.chooseSpace(playerIdToPlay, spaceId);
+    if(playsAsPlayer1.includes(spaceId) || playsAsPlayer2.includes(spaceId)){playAgain=true};
     // The same player may have to play again if the column he chose was full
     if (!playAgain) {
       // Save board states and plays
       if (playerIdToPlay === 1) {
         boardStatesAsPlayer1.push(formattedBoard);
-        playsAsPlayer1.push(columnIndex);
+        playsAsPlayer1.push(spaceId);
       } else if (playerIdToPlay === 2) {
         boardStatesAsPlayer2.push(formattedBoard);
-        playsAsPlayer2.push(columnIndex);
+        playsAsPlayer2.push(spaceId);
       }
-
+      
       // Check for wins
       const gameState = game.checkForWin();
+      /*
+      game.displayBoard()
+      console.log(gameState)
+      console.log(game.getSpaceById(spaceId).bigid,game.getSpaceById(spaceId).smallid, spaceId, playerIdToPlay)
+      console.log("------------------------")
+      */
       switch (gameState) {
         case 0:
           // Nobody won, switch player
@@ -64,8 +74,7 @@ exports.playGame = (networkType: string, epsilon: number, myNetwork: any, displa
           break;
       }
     } else {
-      // Maybe backpropagate the fact that it played bad
-      // For the moment, just ignore
+      
     }
   }
   if (winner > 0) {
@@ -74,7 +83,7 @@ exports.playGame = (networkType: string, epsilon: number, myNetwork: any, displa
     loserBoardStates = winner === 1 ? boardStatesAsPlayer2 : boardStatesAsPlayer1;
     loserPlays = winner === 1 ? playsAsPlayer2 : playsAsPlayer1;
   }
-  if (display) game.display();
+  if (display) game.displayBoard();
   return {
     winnerBoardStates,
     winnerPlays,

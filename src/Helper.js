@@ -1,16 +1,16 @@
 // @flow
-const connect4 = require('./Game');
+const noughtsAndCrosses = require('./Game');
 
-exports.randomChoice = (choices: Array<number>): number => {
+exports.randomChoice = (choices) => {
   const index = Math.floor(Math.random() * choices.length);
   return choices[index];
 }
 
-exports.getArrayFromIndex = (columnIndex: number, value: number): Array<number> => (
+exports.getArrayFromIndex = (columnIndex, value) => (
   new Array(7).fill(0).map((_, index) => (index === columnIndex ? value : 0))
 )
 
-exports.boardToConvolutionalVol = (board: Array<Array<number>>, playerId: number): any => {
+exports.boardToConvolutionalVol = (board, playerId) => {
   const opponentId = playerId === 1 ? 2 : 1;
     const vol = {
       sx: 6,
@@ -23,7 +23,7 @@ exports.boardToConvolutionalVol = (board: Array<Array<number>>, playerId: number
     return vol;
 }
 
-const boardTo1DArrayFiltered = (board: Array<Array<number>>, playerId: number): Array<number> => {
+const boardTo1DArrayFiltered = (board, playerId) => {
   // this function returns the board in a single array with
   // only the playerId chips appearing
   return board.reduce((array, line) => array.concat(
@@ -34,7 +34,7 @@ const boardTo1DArrayFiltered = (board: Array<Array<number>>, playerId: number): 
   ), []);
 }
 
-exports.boardTo1DArrayFormatted = (board: Array<Array<number>>, playerId: number): Array<number> => {
+exports.boardTo1DArrayFormatted = (board, playerId) => {
   return board.reduce((array, line) => array.concat(
     line.map((cellValue) => {
       if (cellValue === 0) return 0;
@@ -44,9 +44,9 @@ exports.boardTo1DArrayFormatted = (board: Array<Array<number>>, playerId: number
   ), []);
 }
 
-exports.evaluateLearning = (network: any): Array<number> => {
+exports.evaluateLearning = (network) => {
   const benchMark = [];
-  const game1 = new connect4.Game();
+  const game1 = new noughtsAndCrosses.Game();
   game1.playChip(1, 1);
   game1.playChip(2, 0);
   game1.playChip(1, 2);
@@ -55,7 +55,7 @@ exports.evaluateLearning = (network: any): Array<number> => {
   game1.playChip(2, 1);
   benchMark.push(network.activate(game1.get1DArrayFormatted(1)));
 
-  const game2 = new connect4.Game();
+  const game2 = new noughtsAndCrosses.Game();
   game2.playChip(2, 0);
   game2.playChip(1, 1);
   game2.playChip(2, 0);
@@ -65,7 +65,7 @@ exports.evaluateLearning = (network: any): Array<number> => {
   game2.playChip(2, 2);
   benchMark.push(network.activate(game2.get1DArrayFormatted(1)));
 
-  const game3 = new connect4.Game();
+  const game3 = new noughtsAndCrosses.Game();
   game3.playChip(1, 0);
   game3.playChip(2, 0);
   game3.playChip(1, 1);
@@ -83,40 +83,40 @@ exports.evaluateLearning = (network: any): Array<number> => {
   return benchMark;
 }
 
-exports.evaluateLearningCNN = (network: any): Array<number> => {
+exports.evaluateLearningCNN = (network) => {
   const benchMark = [];
-  const game1 = new connect4.Game();
-  game1.playChip(1, 1);
-  game1.playChip(2, 0);
-  game1.playChip(1, 2);
-  game1.playChip(2, 6);
-  game1.playChip(1, 3);
-  game1.playChip(2, 1);
+  const game1 = new noughtsAndCrosses.Game();
+  game1.chooseSpace(1, 1);
+  game1.chooseSpace(2, 0);
+  game1.chooseSpace(1, 2);
+  game1.chooseSpace(2, 6);
+  game1.chooseSpace(1, 3);
+  game1.chooseSpace(2, 1);
   benchMark.push(network.forward(game1.getConvolutionalVol(1)).w);
 
-  const game2 = new connect4.Game();
-  game2.playChip(2, 0);
-  game2.playChip(1, 1);
-  game2.playChip(2, 0);
-  game2.playChip(1, 1);
-  game2.playChip(2, 6);
-  game2.playChip(1, 1);
-  game2.playChip(2, 2);
+  const game2 = new noughtsAndCrosses.Game();
+  game2.chooseSpace(2, 0);
+  game2.chooseSpace(1, 1);
+  game2.chooseSpace(2, 0);
+  game2.chooseSpace(1, 1);
+  game2.chooseSpace(2, 6);
+  game2.chooseSpace(1, 1);
+  game2.chooseSpace(2, 2);
   benchMark.push(network.forward(game2.getConvolutionalVol(1)).w);
 
-  const game3 = new connect4.Game();
-  game3.playChip(1, 0);
-  game3.playChip(2, 0);
-  game3.playChip(1, 1);
-  game3.playChip(2, 6);
-  game3.playChip(1, 6);
-  game3.playChip(2, 2);
-  game3.playChip(1, 3);
-  game3.playChip(2, 1);
-  game3.playChip(1, 1);
-  game3.playChip(2, 3);
-  game3.playChip(1, 2);
-  game3.playChip(2, 0);
+  const game3 = new noughtsAndCrosses.Game();
+  game3.chooseSpace(1, 0);
+  game3.chooseSpace(2, 0);
+  game3.chooseSpace(1, 1);
+  game3.chooseSpace(2, 6);
+  game3.chooseSpace(1, 6);
+  game3.chooseSpace(2, 2);
+  game3.chooseSpace(1, 3);
+  game3.chooseSpace(2, 1);
+  game3.chooseSpace(1, 1);
+  game3.chooseSpace(2, 3);
+  game3.chooseSpace(1, 2);
+  game3.chooseSpace(2, 0);
   benchMark.push(network.forward(game3.getConvolutionalVol(1)).w);
 
   return benchMark;

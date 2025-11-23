@@ -5,7 +5,7 @@ const Helper = require('./Helper');
 
 const synaptic = require('synaptic');
 
-exports.initialize = (networkType: string, config: Object) => {
+exports.initialize = (networkType, config) => {
   let myNetwork
   
   if (networkType === 'CNN') {
@@ -68,7 +68,7 @@ exports.initialize = (networkType: string, config: Object) => {
   return myNetwork;
 }
 
-exports.getTrainer = (networkType: string, myNetwork: any) => {
+exports.getTrainer = (networkType, myNetwork) => {
   let trainer;
   if (networkType === 'CNN') {
     trainer = new convnetjs.Trainer(
@@ -89,9 +89,9 @@ exports.getTrainer = (networkType: string, myNetwork: any) => {
 }
 
 exports.formatInput = (
-  networkType: string,
-  board: Array<Array<number>>,
-  playerIdToPlay: number
+  networkType,
+  board,
+  playerIdToPlay
 ) => {
   let formattedBoard;
   if (networkType === 'CNN') {
@@ -103,9 +103,9 @@ exports.formatInput = (
 }
 
 exports.predict = (
-  networkType: string,
-  myNetwork: any,
-  board: any,
+  networkType,
+  myNetwork,
+  board,
 ) => {
   let output = [];
   let boardFormatted;
@@ -118,12 +118,12 @@ exports.predict = (
 }
 
 exports.backPropagate = (
-  networkType: string,
-  trainer: any,
-  board: any,
-  reward: number,
-  columnIndex: number,
-  learningRate: number
+  networkType,
+  trainer,
+  board,
+  reward,
+  columnIndex,
+  learningRate
 ) => {
   const outputArray = Helper.getArrayFromIndex(columnIndex, reward);
   if (networkType === 'CNN') {
@@ -136,8 +136,8 @@ exports.backPropagate = (
 }
 
 exports.evaluate = (
-  networkType: string,
-  myNetwork: any,
+  networkType,
+  myNetwork,
 ) => {
   if (networkType === 'CNN') {
     return Helper.evaluateLearningCNN(myNetwork);

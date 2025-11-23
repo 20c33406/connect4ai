@@ -2,15 +2,15 @@
 const NeuralNetwork = require('./NeuralNetwork');
 
 exports.trainOnPreviousPlays = (
-  networkType: string,
-  myNetwork: any,
-  myTrainer: any,
-  boards: Array<any>,
-  plays: Array<number>,
-  learningRate: number,
-  reward: number,
-  discount: number,
-  gamma: number,
+  networkType,
+  myNetwork,
+  myTrainer,
+  boards,
+  plays,
+  learningRate,
+  reward,
+  discount,
+  gamma,
 ) => {
   const playsLength = plays.length;
   let previousQValue = NeuralNetwork.predict(
